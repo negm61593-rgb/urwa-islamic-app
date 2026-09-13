@@ -14,7 +14,8 @@ export default function Adhkar() {
   const [activeTab, setActiveTab] = useState<'morning' | 'evening'>(typeParam || 'morning');
   const [copiedId, setCopiedId] = useState<number | null>(null);
   // ✅ Fix: destructure resetDhikr here instead of calling useStore.getState() inside event handlers
-  const { adhkarProgress, incrementDhikr, resetCategory, resetDhikr } = useStore();
+  const { adhkarProgress: rawProgress, incrementDhikr, resetCategory, resetDhikr } = useStore();
+  const adhkarProgress = rawProgress || {};
 
   const handleCopyDhikr = async (e: React.MouseEvent, dhikr: typeof adhkarData[0]) => {
     e.stopPropagation();
@@ -34,7 +35,7 @@ export default function Adhkar() {
   const currentAdhkar = adhkarData.filter(d => d.category === activeTab);
   
   const totalDhikr = currentAdhkar.length;
-  const completedDhikr = currentAdhkar.filter(d => (adhkarProgress[d.id] || 0) >= d.count).length;
+  const completedDhikr = currentAdhkar.filter(d => ((adhkarProgress[d.id] || 0) >= d.count)).length;
   const progressPercentage = totalDhikr > 0 ? Math.round((completedDhikr / totalDhikr) * 100) : 0;
 
   return (

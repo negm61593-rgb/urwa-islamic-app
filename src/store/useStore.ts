@@ -21,7 +21,7 @@ interface AppState {
 export const useStore = create<AppState>()(
   persist(
     (set) => ({
-      isDarkMode: false,
+      isDarkMode: true,
       toggleDarkMode: () => set((state) => ({ isDarkMode: !state.isDarkMode })),
       
       adhkarProgress: {},

@@ -1,7 +1,24 @@
 <!doctype html>
-<html lang="ar" dir="rtl">
+<html lang="ar" dir="rtl" class="dark">
   <head>
     <meta charset="UTF-8" />
+    <script>
+      try {
+        var s = localStorage.getItem('urwah-storage');
+        if (s) {
+          var parsed = JSON.parse(s);
+          if (parsed && parsed.state && parsed.state.isDarkMode === false) {
+            document.documentElement.classList.remove('dark');
+          } else {
+            document.documentElement.classList.add('dark');
+          }
+        } else {
+          document.documentElement.classList.add('dark');
+        }
+      } catch (e) {
+        document.documentElement.classList.add('dark');
+      }
+    </script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>عُرْوَة | رفيقك اليومي للقرآن والأذكار ومواقيت الصلاة</title>
     <meta name="description" content="عُروة - تطبيق إسلامي ويب متكامل وحديث يضم تلاوة واستماع القرآن الكريم لأشهر القراء، أذكار الصباح والمساء، المسبحة الإلكترونية، ومواقيت الصلاة والقبلة الحية." />
