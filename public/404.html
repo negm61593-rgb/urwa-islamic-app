@@ -5,7 +5,7 @@
     <title>عُرْوَة - جاري التوجيه</title>
     <script type="text/javascript">
       // SPA redirect for GitHub Pages / Static hosting
-      var pathSegmentsToKeep = 0;
+      var pathSegmentsToKeep = window.location.pathname.startsWith('/urwa-islamic-app') ? 1 : 0;
       var l = window.location;
       l.replace(
         l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') +
