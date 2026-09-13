@@ -500,10 +500,10 @@ export default function Quran() {
                         }
                       }
                     }}
-                    className="bg-white dark:bg-white/5 border border-islamic-gold/20 rounded-full px-6 py-3 font-bold text-islamic-green dark:text-islamic-gold focus:outline-none focus:border-islamic-gold transition-all"
+                    className="bg-white dark:bg-white/5 border border-islamic-gold/30 rounded-full px-6 py-3 font-bold text-islamic-green dark:text-islamic-gold focus:outline-none focus:border-islamic-gold shadow-sm transition-all cursor-pointer"
                   >
                     {reciters.map(r => (
-                      <option key={r.id} value={r.id} className="bg-white dark:bg-islamic-green">{r.name}</option>
+                      <option key={r.id} value={r.id} className="bg-white dark:bg-islamic-green text-islamic-green dark:text-islamic-beige">{r.name}</option>
                     ))}
                   </select>
                 </div>
@@ -516,7 +516,7 @@ export default function Quran() {
                   placeholder="ابحث عن سورة بالاسم أو الرقم..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full bg-white dark:bg-white/5 border border-islamic-gold/10 rounded-[2rem] py-5 pr-16 pl-8 focus:outline-none focus:border-islamic-gold focus:ring-4 focus:ring-islamic-gold/5 transition-all text-lg shadow-sm"
+                  className="w-full bg-white dark:bg-white/5 border border-islamic-gold/20 rounded-[2rem] py-5 pr-16 pl-8 focus:outline-none focus:border-islamic-gold focus:ring-4 focus:ring-islamic-gold/10 text-islamic-green dark:text-islamic-beige placeholder:text-islamic-green/40 dark:placeholder:text-white/30 transition-all text-lg shadow-sm"
                 />
               </div>
             </div>
@@ -538,7 +538,7 @@ export default function Quran() {
                       setSelectedSurah(surah.number);
                       fetchSurahDetail(surah.number);
                     }}
-                    className="group cursor-pointer relative bg-white dark:bg-white/5 p-8 rounded-[2.5rem] shadow-sm hover:shadow-2xl border border-islamic-gold/10 hover:border-islamic-gold/40 transition-all text-right flex items-center justify-between overflow-hidden soft-glow"
+                    className="group cursor-pointer relative bg-white dark:bg-white/5 p-8 rounded-[2.5rem] shadow-sm hover:shadow-2xl border border-islamic-gold/20 hover:border-islamic-gold/50 transition-all text-right flex items-center justify-between overflow-hidden soft-glow"
                   >
                     <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-islamic-gold/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                     
@@ -783,7 +783,7 @@ export default function Quran() {
                       setSelectedSurah(next);
                       fetchSurahDetail(next);
                     }}
-                    className="w-full sm:w-auto flex items-center justify-center gap-4 px-10 py-5 rounded-3xl bg-white dark:bg-white/5 text-islamic-gold font-black text-lg disabled:opacity-30 transition-all hover:shadow-2xl border border-islamic-gold/10 group"
+                    className="w-full sm:w-auto flex items-center justify-center gap-4 px-10 py-5 rounded-3xl bg-white dark:bg-white/5 text-islamic-green dark:text-islamic-gold font-black text-lg disabled:opacity-30 transition-all hover:shadow-2xl border border-islamic-gold/25 hover:border-islamic-gold/60 shadow-md group cursor-pointer"
                   >
                     <ChevronRight size={24} className="group-hover:translate-x-1 transition-transform" />
                     السورة السابقة
@@ -795,7 +795,7 @@ export default function Quran() {
                       setSelectedSurah(next);
                       fetchSurahDetail(next);
                     }}
-                    className="w-full sm:w-auto flex items-center justify-center gap-4 px-10 py-5 rounded-3xl bg-white dark:bg-white/5 text-islamic-gold font-black text-lg disabled:opacity-30 transition-all hover:shadow-2xl border border-islamic-gold/10 group"
+                    className="w-full sm:w-auto flex items-center justify-center gap-4 px-10 py-5 rounded-3xl bg-white dark:bg-white/5 text-islamic-green dark:text-islamic-gold font-black text-lg disabled:opacity-30 transition-all hover:shadow-2xl border border-islamic-gold/25 hover:border-islamic-gold/60 shadow-md group cursor-pointer"
                   >
                     السورة التالية
                     <ChevronLeft size={24} className="group-hover:-translate-x-1 transition-transform" />

@@ -10,6 +10,7 @@ export interface DownloadStatus {
 
 export const offlineService = {
   async isDownloaded(surahNumber: number, reciterId: string, url: string): Promise<boolean> {
+    if (typeof caches === 'undefined') return false;
     try {
       const cache = await caches.open(CACHE_NAME);
       const response = await cache.match(url);
@@ -26,6 +27,7 @@ export const offlineService = {
     url: string, 
     onProgress?: (progress: number) => void
   ): Promise<boolean> {
+    if (typeof caches === 'undefined') return false;
     try {
       const cache = await caches.open(CACHE_NAME);
       
@@ -68,6 +70,7 @@ export const offlineService = {
   },
 
   async getAllCachedUrls(): Promise<string[]> {
+    if (typeof caches === 'undefined') return [];
     try {
       const cache = await caches.open(CACHE_NAME);
       const keys = await cache.keys();
@@ -79,6 +82,7 @@ export const offlineService = {
   },
 
   async removeDownloadedSurah(url: string): Promise<boolean> {
+    if (typeof caches === 'undefined') return false;
     try {
       const cache = await caches.open(CACHE_NAME);
       return await cache.delete(url);
@@ -89,6 +93,7 @@ export const offlineService = {
   },
 
   async getCachedAudioUrl(url: string): Promise<string | null> {
+    if (typeof caches === 'undefined') return null;
     try {
       const cache = await caches.open(CACHE_NAME);
       const response = await cache.match(url);

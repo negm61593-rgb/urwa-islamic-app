@@ -2,7 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Book, ChevronLeft, Clock, Copy, Check, Share2 } from 'lucide-react';
 import { motion } from 'motion/react';
-import { cn } from '../lib/utils';
+import { cn, copyToClipboard } from '../lib/utils';
 
 // ─── Daily verse pool (rotates by day-of-year) ───────────────────────────────
 const DAILY_VERSES = [
@@ -75,10 +75,12 @@ export default function Home() {
 
   const [copiedVerse, setCopiedVerse] = useState(false);
 
-  const handleCopyVerse = () => {
-    navigator.clipboard.writeText(`${verse.text}\n${verse.ref}\n(عبر تطبيق عُروة)`);
-    setCopiedVerse(true);
-    setTimeout(() => setCopiedVerse(false), 2000);
+  const handleCopyVerse = async () => {
+    const success = await copyToClipboard(`${verse.text}\n${verse.ref}\n(عبر تطبيق عُروة)`);
+    if (success) {
+      setCopiedVerse(true);
+      setTimeout(() => setCopiedVerse(false), 2000);
+    }
   };
 
   const handleShareVerse = async () => {
@@ -113,7 +115,7 @@ export default function Home() {
             transition={{ duration: 0.9, ease: 'easeOut' }}
             className="space-y-5"
           >
-            <div className="inline-flex items-center gap-3 px-5 py-2 rounded-full bg-islamic-gold/10 border border-islamic-gold/20 text-islamic-gold text-xs font-black tracking-[0.3em] uppercase">
+            <div className="inline-flex items-center gap-3 px-5 py-2 rounded-full bg-islamic-gold/15 border border-islamic-gold/30 text-[#8c6b2d] dark:text-islamic-gold text-xs font-black tracking-[0.3em] uppercase">
               <span className="w-1.5 h-1.5 bg-islamic-gold rounded-full animate-pulse" />
               واحة الهدوء الرقمية
             </div>
@@ -122,7 +124,7 @@ export default function Home() {
               عُرْوَة
             </h1>
 
-            <p className="text-base sm:text-lg md:text-xl opacity-50 font-cairo max-w-lg mx-auto leading-relaxed">
+            <p className="text-base sm:text-lg md:text-xl text-islamic-green/75 dark:text-islamic-beige/75 font-cairo max-w-lg mx-auto leading-relaxed">
               رفيقك اليومي في القراءة والذكر والصلاة
             </p>
           </motion.div>
@@ -131,7 +133,7 @@ export default function Home() {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.35, duration: 0.8 }}
-            className="text-xl md:text-2xl opacity-55 leading-relaxed font-amiri italic max-w-2xl mx-auto"
+            className="text-xl md:text-2xl text-islamic-green/85 dark:text-islamic-beige/85 leading-relaxed font-amiri italic max-w-2xl mx-auto"
           >
             "فَمَنْ يَكْفُرْ بِالطَّاغُوتِ وَيُؤْمِنْ بِاللَّهِ فَقَدِ اسْتَمْسَكَ بِالْعُرْوَةِ الْوُثْقَى لَا انْفِصَامَ لَهَا"
           </motion.p>
@@ -152,7 +154,7 @@ export default function Home() {
             </Link>
             <Link
               to="/prayer"
-              className="inline-flex items-center gap-3 bg-white/50 dark:bg-white/5 backdrop-blur-xl text-islamic-green dark:text-islamic-beige px-10 py-4 rounded-full font-black text-base border border-islamic-gold/15 hover:bg-islamic-gold/10 transition-all"
+              className="inline-flex items-center gap-3 bg-white/80 dark:bg-white/5 backdrop-blur-xl text-islamic-green dark:text-islamic-beige px-10 py-4 rounded-full font-black text-base border border-islamic-gold/30 dark:border-white/10 hover:bg-islamic-gold/15 shadow-md transition-all"
             >
               <Clock size={18} />
               مواقيت الصلاة
@@ -189,7 +191,7 @@ export default function Home() {
               >
                 <Link
                   to={link.path}
-                  className="group relative overflow-hidden flex flex-col h-full bg-white dark:bg-white/5 p-10 rounded-[2.5rem] shadow-sm hover:shadow-2xl transition-all duration-500 border border-islamic-gold/10 hover:border-islamic-gold/35 soft-glow"
+                  className="group relative overflow-hidden flex flex-col h-full bg-white dark:bg-white/5 p-10 rounded-[2.5rem] shadow-sm hover:shadow-2xl transition-all duration-500 border border-islamic-gold/20 hover:border-islamic-gold/50 soft-glow"
                 >
                   {/* Hover shimmer */}
                   <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 animate-shimmer pointer-events-none" />
@@ -207,10 +209,10 @@ export default function Home() {
                       }
                     </div>
                     <div className="space-y-2">
-                      <h3 className="text-xl font-bold font-cairo group-hover:text-islamic-gold transition-colors duration-300">
+                      <h3 className="text-xl font-bold font-cairo text-islamic-green dark:text-islamic-gold group-hover:text-islamic-gold transition-colors duration-300">
                         {link.title}
                       </h3>
-                      <p className="text-sm opacity-55 leading-relaxed font-amiri italic">
+                      <p className="text-sm text-islamic-green/75 dark:text-islamic-beige/65 leading-relaxed font-amiri italic">
                         {link.description}
                       </p>
                     </div>
@@ -233,12 +235,12 @@ export default function Home() {
           initial={{ opacity: 0, scale: 0.97 }}
           whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true, margin: '-60px' }}
-          className="relative overflow-hidden bg-white dark:bg-white/5 p-12 md:p-20 rounded-[3.5rem] shadow-2xl border border-islamic-gold/10 text-center soft-glow"
+          className="relative overflow-hidden bg-white dark:bg-white/5 p-12 md:p-20 rounded-[3.5rem] shadow-2xl border border-islamic-gold/20 text-center soft-glow"
         >
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(197,160,89,0.06)_0%,transparent_55%)] pointer-events-none" />
 
           <div className="relative z-10 max-w-3xl mx-auto space-y-10">
-            <div className="inline-flex items-center gap-3 px-5 py-2 rounded-full bg-islamic-gold/10 text-islamic-gold text-xs font-black uppercase tracking-[0.4em]">
+            <div className="inline-flex items-center gap-3 px-5 py-2 rounded-full bg-islamic-gold/15 border border-islamic-gold/30 text-[#8c6b2d] dark:text-islamic-gold text-xs font-black uppercase tracking-[0.4em]">
               <span className="w-1.5 h-1.5 bg-islamic-gold rounded-full animate-pulse" />
               آية اليوم
             </div>
@@ -258,7 +260,7 @@ export default function Home() {
                 <button
                   onClick={handleCopyVerse}
                   aria-label="نسخ نص الآية"
-                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-xs font-bold border border-islamic-gold/20 bg-islamic-gold/5 text-islamic-green dark:text-islamic-beige hover:bg-islamic-gold/15 transition-all active:scale-95 cursor-pointer"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-xs font-bold border border-islamic-gold/30 bg-white dark:bg-white/5 text-islamic-green dark:text-islamic-beige hover:bg-islamic-gold/15 transition-all active:scale-95 cursor-pointer shadow-sm"
                 >
                   {copiedVerse ? <Check size={14} className="text-emerald-500" /> : <Copy size={14} className="text-islamic-gold" />}
                   <span>{copiedVerse ? 'تم النسخ بنجاح' : 'نسخ الآية'}</span>
@@ -266,7 +268,7 @@ export default function Home() {
                 <button
                   onClick={handleShareVerse}
                   aria-label="مشاركة الآية"
-                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-xs font-bold border border-islamic-gold/20 bg-islamic-gold/5 text-islamic-green dark:text-islamic-beige hover:bg-islamic-gold/15 transition-all active:scale-95 cursor-pointer"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-xs font-bold border border-islamic-gold/30 bg-white dark:bg-white/5 text-islamic-green dark:text-islamic-beige hover:bg-islamic-gold/15 transition-all active:scale-95 cursor-pointer shadow-sm"
                 >
                   <Share2 size={14} className="text-islamic-gold" />
                   <span>مشاركة</span>

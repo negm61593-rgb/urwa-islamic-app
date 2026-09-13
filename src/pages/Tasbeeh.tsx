@@ -138,7 +138,7 @@ export default function Tasbeeh() {
         <div className="mt-16 flex items-center gap-12">
           <button
             onClick={resetTasbeeh}
-            className="w-16 h-16 rounded-2xl bg-white dark:bg-white/5 text-islamic-green dark:text-islamic-gold hover:bg-red-500 hover:text-white transition-all active:scale-90 shadow-xl border border-islamic-gold/10 flex items-center justify-center group"
+            className="w-16 h-16 rounded-2xl bg-white dark:bg-white/5 text-islamic-green dark:text-islamic-gold hover:bg-red-500 hover:text-white transition-all active:scale-90 shadow-xl border border-islamic-gold/25 flex items-center justify-center group cursor-pointer"
             title="إعادة تعيين"
           >
             <RotateCcw size={28} className="group-hover:rotate-180 transition-transform duration-700" />
@@ -148,7 +148,7 @@ export default function Tasbeeh() {
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9, rotate: 5 }}
             onClick={incrementTasbeeh}
-            className="w-32 h-32 md:w-48 md:h-48 rounded-[3rem] bg-islamic-gold text-islamic-green flex items-center justify-center shadow-[0_20px_60px_rgba(197,160,89,0.4)] hover:shadow-[0_30px_80px_rgba(197,160,89,0.6)] transition-all group relative overflow-hidden"
+            className="w-32 h-32 md:w-48 md:h-48 rounded-[3rem] bg-islamic-gold text-islamic-green flex items-center justify-center shadow-[0_20px_60px_rgba(197,160,89,0.4)] hover:shadow-[0_30px_80px_rgba(197,160,89,0.6)] transition-all group relative overflow-hidden cursor-pointer"
           >
             <div className="absolute inset-0 bg-white opacity-0 group-active:opacity-20 transition-opacity" />
             <Plus 
@@ -160,7 +160,7 @@ export default function Tasbeeh() {
           <button
             onClick={() => setIsSettingsOpen(!isSettingsOpen)}
             className={cn(
-              "w-16 h-16 rounded-2xl transition-all active:scale-90 shadow-xl border border-islamic-gold/10 flex items-center justify-center group",
+              "w-16 h-16 rounded-2xl transition-all active:scale-90 shadow-xl border border-islamic-gold/25 flex items-center justify-center group cursor-pointer",
               isSettingsOpen 
                 ? "bg-islamic-gold text-islamic-green" 
                 : "bg-white dark:bg-white/5 text-islamic-green dark:text-islamic-gold hover:bg-islamic-gold/20"
@@ -254,10 +254,10 @@ export default function Tasbeeh() {
                 resetTasbeeh();
               }}
               className={cn(
-                'p-6 rounded-3xl border text-center space-y-3 transition-all duration-300',
+                'p-6 rounded-3xl border text-center space-y-3 transition-all duration-300 cursor-pointer',
                 activeDhikr === i
                   ? 'bg-islamic-green border-islamic-gold/40 shadow-xl'
-                  : 'bg-white dark:bg-white/5 border-islamic-gold/10 hover:border-islamic-gold/30 hover:shadow-md'
+                  : 'bg-white dark:bg-white/5 border-islamic-gold/20 hover:border-islamic-gold/50 hover:shadow-xl'
               )}
             >
               <p className={cn(
@@ -270,7 +270,7 @@ export default function Tasbeeh() {
                 'inline-block px-3 py-1 rounded-full text-xs font-bold',
                 activeDhikr === i
                   ? 'bg-islamic-gold/20 text-islamic-gold'
-                  : 'bg-islamic-gold/10 text-islamic-gold'
+                  : 'bg-islamic-gold/15 text-[#8c6b2d] dark:text-islamic-gold'
               )}>
                 {dhikr.goal} مرة
               </div>
@@ -280,7 +280,7 @@ export default function Tasbeeh() {
       </div>
 
       {/* Keyboard hint */}
-      <p className="text-center text-xs opacity-20 font-bold tracking-widest uppercase">
+      <p className="text-center text-xs text-islamic-green/60 dark:text-islamic-beige/40 font-bold tracking-widest uppercase">
         اضغط <kbd className="px-2 py-0.5 rounded bg-black/5 dark:bg-white/5 font-mono">Space</kbd> للعد •{' '}
         <kbd className="px-2 py-0.5 rounded bg-black/5 dark:bg-white/5 font-mono">R</kbd> للإعادة
       </p>

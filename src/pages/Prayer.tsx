@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence, useSpring, useTransform } from "motion/react";
 import { MapPin, RefreshCw, AlertCircle, ChevronDown, Navigation, Clock, Loader2 } from "lucide-react";
 import {
@@ -124,7 +124,7 @@ function QiblaCompass({ qiblaDirection }: QiblaCompassProps) {
         ].map(({ label, top, bottom, left, right, transform }) => (
           <span
             key={label}
-            className="absolute text-xs font-black text-islamic-gold/60 z-10"
+            className="absolute text-xs font-black text-islamic-green dark:text-islamic-gold z-10"
             style={{ top, bottom, left, right, transform } as React.CSSProperties}
           >
             {label}
@@ -456,7 +456,7 @@ export default function Prayer() {
                           "relative overflow-hidden p-8 rounded-[2.5rem] border transition-all duration-500 soft-glow",
                           isNext
                             ? "bg-islamic-green text-islamic-beige border-islamic-gold/40 shadow-2xl scale-[1.03]"
-                            : "bg-white dark:bg-white/5 border-islamic-gold/10 hover:border-islamic-gold/30 hover:shadow-xl"
+                            : "bg-white dark:bg-white/5 border-islamic-gold/20 hover:border-islamic-gold/50 shadow-sm hover:shadow-2xl"
                         )}
                       >
                         {isNext && (

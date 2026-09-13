@@ -81,7 +81,7 @@ export default function Layout({ children }: LayoutProps) {
           </Link>
 
           {/* Desktop Nav */}
-          <div className="hidden lg:flex items-center gap-1 bg-white/50 dark:bg-white/5 backdrop-blur-2xl px-2 py-2 rounded-[2rem] border border-white/30 dark:border-white/5 shadow-2xl soft-glow">
+          <div className="hidden lg:flex items-center gap-1 bg-white/80 dark:bg-white/5 backdrop-blur-2xl px-2 py-2 rounded-[2rem] border border-islamic-gold/20 dark:border-white/5 shadow-2xl soft-glow">
             {NAV_LINKS.map((link) => (
               <Link
                 key={link.path}
@@ -91,7 +91,7 @@ export default function Layout({ children }: LayoutProps) {
                   'relative px-4 py-2 rounded-full text-sm font-bold transition-all duration-300 flex items-center gap-2 whitespace-nowrap',
                   isActive(link.path)
                     ? 'bg-islamic-green text-islamic-gold shadow-lg'
-                    : 'hover:bg-islamic-gold/10 text-islamic-green dark:text-islamic-beige'
+                    : 'hover:bg-islamic-gold/15 text-islamic-green dark:text-islamic-beige'
                 )}
               >
                 <NavIcon icon={link.icon} emoji={link.emoji} size={16} />
@@ -108,7 +108,7 @@ export default function Layout({ children }: LayoutProps) {
             <button
               onClick={toggleDarkMode}
               aria-label={isDarkMode ? 'تفعيل الوضع النهاري' : 'تفعيل الوضع الليلي'}
-              className="w-9 h-9 rounded-full flex items-center justify-center text-islamic-gold hover:bg-islamic-gold hover:text-islamic-green transition-all"
+              className="w-9 h-9 rounded-full flex items-center justify-center text-islamic-gold hover:bg-islamic-gold hover:text-islamic-green transition-all cursor-pointer"
             >
               <AnimatePresence mode="wait" initial={false}>
                 <motion.span
@@ -125,7 +125,7 @@ export default function Layout({ children }: LayoutProps) {
           </div>
 
           {/* Tablet Nav (md–lg): icon-only pills */}
-          <div className="hidden md:flex lg:hidden items-center gap-1 bg-white/50 dark:bg-white/5 backdrop-blur-2xl px-2 py-2 rounded-[2rem] border border-white/30 dark:border-white/5 shadow-2xl">
+          <div className="hidden md:flex lg:hidden items-center gap-1 bg-white/80 dark:bg-white/5 backdrop-blur-2xl px-2 py-2 rounded-[2rem] border border-islamic-gold/20 dark:border-white/5 shadow-2xl">
             {NAV_LINKS.map((link) => (
               <Link
                 key={link.path}
@@ -136,7 +136,7 @@ export default function Layout({ children }: LayoutProps) {
                   'w-10 h-10 rounded-full flex items-center justify-center text-sm transition-all duration-300',
                   isActive(link.path)
                     ? 'bg-islamic-green text-islamic-gold shadow-lg'
-                    : 'hover:bg-islamic-gold/10 text-islamic-green dark:text-islamic-beige'
+                    : 'hover:bg-islamic-gold/15 text-islamic-green dark:text-islamic-beige'
                 )}
               >
                 <NavIcon icon={link.icon} emoji={link.emoji} size={18} />
@@ -157,7 +157,7 @@ export default function Layout({ children }: LayoutProps) {
             <button
               onClick={toggleDarkMode}
               aria-label={isDarkMode ? 'تفعيل الوضع النهاري' : 'تفعيل الوضع الليلي'}
-              className="w-11 h-11 rounded-2xl bg-white/50 dark:bg-white/5 backdrop-blur-xl flex items-center justify-center text-islamic-gold shadow-lg border border-white/20 dark:border-white/5"
+              className="w-11 h-11 rounded-2xl bg-white/80 dark:bg-white/5 backdrop-blur-xl flex items-center justify-center text-islamic-gold shadow-lg border border-islamic-gold/20 dark:border-white/5 cursor-pointer"
             >
               {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
             </button>
@@ -165,7 +165,7 @@ export default function Layout({ children }: LayoutProps) {
               onClick={() => setIsMenuOpen((v) => !v)}
               aria-label={isMenuOpen ? 'إغلاق القائمة' : 'فتح القائمة'}
               aria-expanded={isMenuOpen}
-              className="w-11 h-11 rounded-2xl bg-white/50 dark:bg-white/5 backdrop-blur-xl flex items-center justify-center text-islamic-gold shadow-lg border border-white/20 dark:border-white/5"
+              className="w-11 h-11 rounded-2xl bg-white/80 dark:bg-white/5 backdrop-blur-xl flex items-center justify-center text-islamic-gold shadow-lg border border-islamic-gold/20 dark:border-white/5 cursor-pointer"
             >
               <AnimatePresence mode="wait" initial={false}>
                 <motion.span
@@ -191,7 +191,7 @@ export default function Layout({ children }: LayoutProps) {
                 transition={{ type: 'spring', stiffness: 300, damping: 30 }}
                 className="absolute top-full left-4 right-4 mt-3 md:hidden pointer-events-auto"
               >
-                <div className="bg-white/90 dark:bg-islamic-green/90 backdrop-blur-2xl rounded-[2rem] p-4 shadow-2xl border border-white/30 dark:border-white/5 space-y-1">
+                <div className="bg-white/95 dark:bg-islamic-green/95 backdrop-blur-2xl rounded-[2rem] p-4 shadow-2xl border border-islamic-gold/20 dark:border-white/5 space-y-1">
                   {NAV_LINKS.map((link) => (
                     <Link
                       key={link.path}
@@ -201,7 +201,7 @@ export default function Layout({ children }: LayoutProps) {
                         'flex items-center gap-4 px-5 py-3.5 rounded-2xl text-base font-bold transition-all',
                         isActive(link.path)
                           ? 'bg-islamic-green text-islamic-gold shadow-lg'
-                          : 'hover:bg-islamic-gold/10 text-islamic-green dark:text-islamic-beige'
+                          : 'hover:bg-islamic-gold/15 text-islamic-green dark:text-islamic-beige'
                       )}
                     >
                       <NavIcon icon={link.icon} emoji={link.emoji} size={20} />

@@ -79,6 +79,9 @@ export const CALCULATION_METHODS: { id: CalculationMethod; name: string }[] = [
 
 const BASE = 'https://api.aladhan.com/v1';
 
+export const DEFAULT_COORDINATES: Coordinates = { latitude: 21.4225, longitude: 39.8262 };
+export const DEFAULT_CITY = 'مكة المكرمة';
+
 export const prayerService = {
   /**
    * Fetch today's prayer times for given coordinates.
@@ -114,11 +117,12 @@ export const prayerService = {
   },
 
   /**
-   * Get user's current coordinates via the browser Geolocation API.
+   * Get user's current coordinates via the browser Geolocation API with fallback.
    */
-  getCurrentPosition(): Promise<Coordinates> {
+  getCurrentPosition(fallbackToDefault = true): Promise<Coordinates> {
     return new Promise((resolve, reject) => {
       if (!navigator.geolocation) {
+        if (fallbackToDefault) return resolve(DEFAULT_COORDINATES);
         reject(new Error('متصفحك لا يدعم تحديد الموقع الجغرافي.'));
         return;
       }
@@ -126,6 +130,11 @@ export const prayerService = {
         (pos) =>
           resolve({ latitude: pos.coords.latitude, longitude: pos.coords.longitude }),
         (err) => {
+          if (fallbackToDefault) {
+            console.warn('Geolocation unavailable, falling back to Makkah:', err?.message);
+            resolve(DEFAULT_COORDINATES);
+            return;
+          }
           switch (err.code) {
             case err.PERMISSION_DENIED:
               reject(new Error('تم رفض إذن الوصول إلى الموقع. يرجى السماح بالوصول من إعدادات المتصفح.'));
@@ -140,7 +149,7 @@ export const prayerService = {
               reject(new Error('حدث خطأ غير معروف أثناء تحديد الموقع.'));
           }
         },
-        { timeout: 10000, maximumAge: 300000, enableHighAccuracy: false }
+        { timeout: 6000, maximumAge: 300000, enableHighAccuracy: false }
       );
     });
   },
@@ -149,6 +158,10 @@ export const prayerService = {
    * Reverse-geocode coordinates to a city name using a free API.
    */
   async getCityName(coords: Coordinates): Promise<string> {
+    if (Math.abs(coords.latitude - DEFAULT_COORDINATES.latitude) < 0.05 &&
+        Math.abs(coords.longitude - DEFAULT_COORDINATES.longitude) < 0.05) {
+      return DEFAULT_CITY;
+    }
     try {
       const url = `https://nominatim.openstreetmap.org/reverse?lat=${coords.latitude}&lon=${coords.longitude}&format=json&accept-language=ar`;
       const res = await fetch(url, {

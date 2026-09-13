@@ -4,7 +4,7 @@ import { Sun, Moon, RotateCcw, CheckCircle2, Plus, Copy } from 'lucide-react';
 import { adhkarData } from '../data/adhkar';
 import { useStore } from '../store/useStore';
 import { useLocation } from 'react-router-dom';
-import { cn } from '../lib/utils';
+import { cn, copyToClipboard } from '../lib/utils';
 
 export default function Adhkar() {
   const location = useLocation();
@@ -12,19 +12,21 @@ export default function Adhkar() {
   const typeParam = searchParams.get('type') as 'morning' | 'evening' | null;
   
   const [activeTab, setActiveTab] = useState<'morning' | 'evening'>(typeParam || 'morning');
-  const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [copiedId, setCopiedId] = useState<number | null>(null);
   // ✅ Fix: destructure resetDhikr here instead of calling useStore.getState() inside event handlers
   const { adhkarProgress, incrementDhikr, resetCategory, resetDhikr } = useStore();
 
-  const handleCopyDhikr = (e: React.MouseEvent, dhikr: typeof adhkarData[0]) => {
+  const handleCopyDhikr = async (e: React.MouseEvent, dhikr: typeof adhkarData[0]) => {
     e.stopPropagation();
-    navigator.clipboard.writeText(`${dhikr.text}${dhikr.description ? `\n[${dhikr.description}]` : ''}\n(عبر تطبيق عُروة)`);
-    setCopiedId(dhikr.id);
-    setTimeout(() => setCopiedId(null), 2000);
+    const success = await copyToClipboard(`${dhikr.text}${dhikr.description ? `\n[${dhikr.description}]` : ''}\n(عبر تطبيق عُروة)`);
+    if (success) {
+      setCopiedId(dhikr.id);
+      setTimeout(() => setCopiedId(null), 2000);
+    }
   };
 
   useEffect(() => {
-    if (typeParam && (typeParam === 'morning' || typeParam === 'evening')) {
+    if (typeParam === 'morning' || typeParam === 'evening') {
       setActiveTab(typeParam);
     }
   }, [typeParam]);
@@ -56,14 +58,14 @@ export default function Adhkar() {
         </div>
 
         {/* Category Switcher */}
-        <div className="flex justify-center p-2 bg-islamic-beige dark:bg-white/5 rounded-[2rem] w-fit mx-auto border border-islamic-gold/10 shadow-inner">
+        <div className="flex justify-center p-2 bg-black/5 dark:bg-white/5 rounded-[2rem] w-fit mx-auto border border-islamic-gold/20 shadow-inner">
           <button
             onClick={() => setActiveTab('morning')}
             className={cn(
               "flex items-center gap-3 px-10 py-4 rounded-[1.5rem] text-sm font-bold transition-all duration-500",
               activeTab === 'morning'
-                ? "bg-white dark:bg-islamic-gold text-islamic-green shadow-xl scale-105"
-                : "text-islamic-green/60 dark:text-islamic-beige/60 hover:text-islamic-green"
+                ? "bg-white dark:bg-islamic-gold text-islamic-green shadow-xl scale-105 border border-islamic-gold/20"
+                : "text-islamic-green/70 dark:text-islamic-beige/60 hover:text-islamic-green font-bold"
             )}
           >
             <Sun size={20} className={activeTab === 'morning' ? "text-islamic-gold dark:text-islamic-green" : ""} />
@@ -74,8 +76,8 @@ export default function Adhkar() {
             className={cn(
               "flex items-center gap-3 px-10 py-4 rounded-[1.5rem] text-sm font-bold transition-all duration-500",
               activeTab === 'evening'
-                ? "bg-white dark:bg-islamic-gold text-islamic-green shadow-xl scale-105"
-                : "text-islamic-green/60 dark:text-islamic-beige/60 hover:text-islamic-green"
+                ? "bg-white dark:bg-islamic-gold text-islamic-green shadow-xl scale-105 border border-islamic-gold/20"
+                : "text-islamic-green/70 dark:text-islamic-beige/60 hover:text-islamic-green font-bold"
             )}
           >
             <Moon size={20} className={activeTab === 'evening' ? "text-islamic-gold dark:text-islamic-green" : ""} />
@@ -146,8 +148,8 @@ export default function Adhkar() {
                   className={cn(
                     "group relative p-10 rounded-[2.5rem] border transition-all duration-500 cursor-pointer overflow-hidden flex flex-col justify-between soft-glow",
                     isCompleted
-                      ? "bg-islamic-green/5 border-islamic-gold/30 opacity-60 grayscale-[0.5]"
-                      : "bg-white dark:bg-white/5 border-islamic-gold/10 hover:border-islamic-gold/40 shadow-sm hover:shadow-2xl"
+                      ? "bg-islamic-green/5 border-islamic-gold/30 opacity-70 grayscale-[0.3]"
+                      : "bg-white dark:bg-white/5 border-islamic-gold/20 hover:border-islamic-gold/50 shadow-sm hover:shadow-2xl"
                   )}
                 >
                   {/* Background Number */}
@@ -172,7 +174,7 @@ export default function Adhkar() {
                     </div>
 
                     {dhikr.description && (
-                      <p className="text-sm opacity-50 font-light leading-relaxed border-r-2 border-islamic-gold/20 pr-5 italic">
+                      <p className="text-sm text-islamic-green/80 dark:text-islamic-beige/70 font-normal leading-relaxed border-r-2 border-islamic-gold/30 pr-5 italic">
                         {dhikr.description}
                       </p>
                     )}
@@ -180,7 +182,7 @@ export default function Adhkar() {
 
                   <div className="mt-10 space-y-6 relative z-10">
                     {/* Individual Progress Bar */}
-                    <div className="h-1.5 bg-islamic-beige dark:bg-white/5 rounded-full overflow-hidden pointer-events-none">
+                    <div className="h-1.5 bg-black/5 dark:bg-white/5 rounded-full overflow-hidden pointer-events-none">
                       <motion.div 
                         initial={{ width: 0 }}
                         animate={{ width: `${progress}%` }}
@@ -192,12 +194,12 @@ export default function Adhkar() {
                       <div className="flex items-center gap-3 pointer-events-none">
                         <div className="text-center">
                           <span className="block text-3xl font-bold font-cairo text-islamic-gold">{count}</span>
-                          <span className="text-[10px] uppercase tracking-widest font-black opacity-30">الحالي</span>
+                          <span className="text-[10px] uppercase tracking-widest font-black opacity-50">الحالي</span>
                         </div>
                         <div className="w-px h-10 bg-islamic-gold/20" />
                         <div className="text-center">
-                          <span className="block text-3xl font-bold font-cairo opacity-20">{dhikr.count}</span>
-                          <span className="text-[10px] uppercase tracking-widest font-black opacity-30">الهدف</span>
+                          <span className="block text-3xl font-bold font-cairo text-islamic-green/40 dark:text-white/30">{dhikr.count}</span>
+                          <span className="text-[10px] uppercase tracking-widest font-black opacity-50">الهدف</span>
                         </div>
                       </div>
                       
