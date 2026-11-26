@@ -21,6 +21,8 @@ app.use(express.json({ limit: '1mb' }));
 // CORS: only allow requests from the frontend dev server and production origin
 const allowedOrigins = [
   'http://localhost:3000',
+  'http://localhost:5173',
+  'https://urwa-islamic.vercel.app',
   process.env.APP_URL,
 ].filter(Boolean) as string[];
 

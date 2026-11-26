@@ -189,9 +189,15 @@ export const prayerService = {
   },
 
   /**
-   * Returns the name of the next prayer and minutes remaining.
+   * Returns the name of the next prayer, minutes and exact seconds remaining.
    */
-  getNextPrayer(timings: PrayerTimes): { name: string; nameAr: string; time: string; minutesLeft: number } {
+  getNextPrayer(timings: PrayerTimes): {
+    name: string;
+    nameAr: string;
+    time: string;
+    minutesLeft: number;
+    secondsLeft: number;
+  } {
     const prayers: { key: keyof PrayerTimes; nameAr: string }[] = [
       { key: 'Fajr',    nameAr: 'الفجر' },
       { key: 'Sunrise', nameAr: 'الشروق' },
@@ -202,31 +208,33 @@ export const prayerService = {
     ];
 
     const now = new Date();
-    const nowMinutes = now.getHours() * 60 + now.getMinutes();
+    const nowSeconds = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
 
     for (const prayer of prayers) {
       const [h, m] = prayerService.formatTime(timings[prayer.key]).split(':').map(Number);
-      const prayerMinutes = h * 60 + m;
-      if (prayerMinutes > nowMinutes) {
-        const diff = prayerMinutes - nowMinutes;
+      const prayerSeconds = h * 3600 + m * 60;
+      if (prayerSeconds > nowSeconds) {
+        const diffSeconds = prayerSeconds - nowSeconds;
         return {
           name: prayer.key,
           nameAr: prayer.nameAr,
           time: prayerService.formatTime(timings[prayer.key]),
-          minutesLeft: diff,
+          minutesLeft: Math.ceil(diffSeconds / 60),
+          secondsLeft: diffSeconds,
         };
       }
     }
 
     // All prayers passed — next is Fajr tomorrow
     const [h, m] = prayerService.formatTime(timings.Fajr).split(':').map(Number);
-    const fajrMinutes = h * 60 + m;
-    const minutesLeft = 1440 - nowMinutes + fajrMinutes;
+    const fajrSeconds = h * 3600 + m * 60;
+    const diffSeconds = 86400 - nowSeconds + fajrSeconds;
     return {
       name: 'Fajr',
       nameAr: 'الفجر',
       time: prayerService.formatTime(timings.Fajr),
-      minutesLeft,
+      minutesLeft: Math.ceil(diffSeconds / 60),
+      secondsLeft: diffSeconds,
     };
   },
 };

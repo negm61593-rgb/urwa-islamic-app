@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Book, ChevronLeft, Clock, Copy, Check, Share2 } from 'lucide-react';
 import { motion } from 'motion/react';
@@ -185,7 +185,7 @@ export default function Home() {
                 key={link.title}
                 initial={{ opacity: 0, y: 24 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: '-40px' }}
+                viewport={{ once: true, amount: 0.05 }}
                 transition={{ delay: index * 0.08, duration: 0.5 }}
                 className={link.span}
               >
@@ -234,7 +234,7 @@ export default function Home() {
         <motion.div
           initial={{ opacity: 0, scale: 0.97 }}
           whileInView={{ opacity: 1, scale: 1 }}
-          viewport={{ once: true, margin: '-60px' }}
+          viewport={{ once: true, amount: 0.05 }}
           className="relative overflow-hidden bg-white dark:bg-white/5 p-12 md:p-20 rounded-[3.5rem] shadow-2xl border border-islamic-gold/20 text-center soft-glow"
         >
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(197,160,89,0.06)_0%,transparent_55%)] pointer-events-none" />
@@ -245,15 +245,15 @@ export default function Home() {
               آية اليوم
             </div>
 
-            <blockquote className="space-y-8">
-              <p className="text-3xl md:text-5xl font-amiri leading-[1.7] text-islamic-green dark:text-islamic-beige">
+            <figure className="space-y-8">
+              <blockquote className="text-3xl md:text-5xl font-amiri leading-[1.7] text-islamic-green dark:text-islamic-beige">
                 {verse.text}
-              </p>
-              <footer className="flex items-center justify-center gap-4">
+              </blockquote>
+              <figcaption className="flex items-center justify-center gap-4">
                 <div className="h-px w-10 bg-islamic-gold/30" />
                 <cite className="text-islamic-gold font-serif italic text-lg not-italic">{verse.ref}</cite>
                 <div className="h-px w-10 bg-islamic-gold/30" />
-              </footer>
+              </figcaption>
 
               {/* Action buttons */}
               <div className="flex items-center justify-center gap-3 pt-2">
@@ -274,7 +274,7 @@ export default function Home() {
                   <span>مشاركة</span>
                 </button>
               </div>
-            </blockquote>
+            </figure>
           </div>
         </motion.div>
       </section>

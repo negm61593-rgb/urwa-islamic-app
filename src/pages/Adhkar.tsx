@@ -13,9 +13,12 @@ export default function Adhkar() {
   
   const [activeTab, setActiveTab] = useState<'morning' | 'evening'>(typeParam || 'morning');
   const [copiedId, setCopiedId] = useState<number | null>(null);
-  // ✅ Fix: destructure resetDhikr here instead of calling useStore.getState() inside event handlers
-  const { adhkarProgress: rawProgress, incrementDhikr, resetCategory, resetDhikr } = useStore();
+  const { adhkarProgress: rawProgress, incrementDhikr, resetCategory, resetDhikr, checkAdhkarDayReset } = useStore();
   const adhkarProgress = rawProgress || {};
+
+  useEffect(() => {
+    checkAdhkarDayReset();
+  }, [checkAdhkarDayReset]);
 
   const handleCopyDhikr = async (e: React.MouseEvent, dhikr: typeof adhkarData[0]) => {
     e.stopPropagation();
@@ -59,29 +62,29 @@ export default function Adhkar() {
         </div>
 
         {/* Category Switcher */}
-        <div className="flex justify-center p-2 bg-black/5 dark:bg-white/5 rounded-[2rem] w-fit mx-auto border border-islamic-gold/20 shadow-inner">
+        <div className="flex justify-center p-1.5 sm:p-2 bg-black/5 dark:bg-white/5 rounded-[2rem] w-fit max-w-full mx-auto border border-islamic-gold/20 shadow-inner">
           <button
             onClick={() => setActiveTab('morning')}
             className={cn(
-              "flex items-center gap-3 px-10 py-4 rounded-[1.5rem] text-sm font-bold transition-all duration-500",
+              "flex items-center gap-2 sm:gap-3 px-5 sm:px-10 py-3 sm:py-4 rounded-[1.5rem] text-xs sm:text-sm font-bold transition-all duration-300 whitespace-nowrap cursor-pointer",
               activeTab === 'morning'
-                ? "bg-white dark:bg-islamic-gold text-islamic-green shadow-xl scale-105 border border-islamic-gold/20"
-                : "text-islamic-green/70 dark:text-islamic-beige/60 hover:text-islamic-green font-bold"
+                ? "bg-white dark:bg-islamic-gold text-islamic-green shadow-xl scale-[1.02] border border-islamic-gold/20"
+                : "text-islamic-green/75 dark:text-islamic-beige/70 hover:text-islamic-green font-bold"
             )}
           >
-            <Sun size={20} className={activeTab === 'morning' ? "text-islamic-gold dark:text-islamic-green" : ""} />
+            <Sun size={18} className={activeTab === 'morning' ? "text-islamic-gold dark:text-islamic-green shrink-0" : "shrink-0"} />
             أذكار الصباح
           </button>
           <button
             onClick={() => setActiveTab('evening')}
             className={cn(
-              "flex items-center gap-3 px-10 py-4 rounded-[1.5rem] text-sm font-bold transition-all duration-500",
+              "flex items-center gap-2 sm:gap-3 px-5 sm:px-10 py-3 sm:py-4 rounded-[1.5rem] text-xs sm:text-sm font-bold transition-all duration-300 whitespace-nowrap cursor-pointer",
               activeTab === 'evening'
-                ? "bg-white dark:bg-islamic-gold text-islamic-green shadow-xl scale-105 border border-islamic-gold/20"
-                : "text-islamic-green/70 dark:text-islamic-beige/60 hover:text-islamic-green font-bold"
+                ? "bg-white dark:bg-islamic-gold text-islamic-green shadow-xl scale-[1.02] border border-islamic-gold/20"
+                : "text-islamic-green/75 dark:text-islamic-beige/70 hover:text-islamic-green font-bold"
             )}
           >
-            <Moon size={20} className={activeTab === 'evening' ? "text-islamic-gold dark:text-islamic-green" : ""} />
+            <Moon size={18} className={activeTab === 'evening' ? "text-islamic-gold dark:text-islamic-green shrink-0" : "shrink-0"} />
             أذكار المساء
           </button>
         </div>
@@ -90,25 +93,25 @@ export default function Adhkar() {
       {/* Progress Card */}
       <motion.div 
         layout
-        className="glass p-10 rounded-[3rem] border border-islamic-gold/10 shadow-2xl overflow-hidden relative soft-glow"
+        className="glass p-6 sm:p-10 rounded-[2.5rem] sm:rounded-[3rem] border border-islamic-gold/15 shadow-2xl overflow-hidden relative soft-glow"
       >
         <div className="absolute top-0 right-0 w-40 h-40 bg-islamic-gold/5 rounded-full -mr-20 -mt-20 blur-3xl" />
         
-        <div className="flex flex-col lg:flex-row items-center justify-between gap-10 relative z-10">
+        <div className="flex flex-col lg:flex-row items-center justify-between gap-6 sm:gap-10 relative z-10">
           <div className="space-y-2 text-center lg:text-right">
-            <h3 className="text-3xl font-bold font-cairo text-islamic-green dark:text-islamic-gold">تقدمك اليوم</h3>
-            <p className="text-lg opacity-50">لقد قرأت {completedDhikr} من أصل {totalDhikr} ذكراً</p>
+            <h3 className="text-2xl sm:text-3xl font-bold font-cairo text-islamic-green dark:text-islamic-gold">تقدمك اليوم</h3>
+            <p className="text-base sm:text-lg text-islamic-green/75 dark:text-islamic-beige/75">لقد قرأت {completedDhikr} من أصل {totalDhikr} ذكراً</p>
           </div>
           
-          <div className="flex-grow max-w-xl w-full space-y-5">
-            <div className="h-5 bg-islamic-beige dark:bg-white/5 rounded-full overflow-hidden border border-islamic-gold/5 p-1">
+          <div className="flex-grow max-w-xl w-full space-y-4">
+            <div className="h-5 bg-islamic-beige dark:bg-white/5 rounded-full overflow-hidden border border-islamic-gold/10 p-1">
               <motion.div
                 initial={{ width: 0 }}
                 animate={{ width: `${progressPercentage}%` }}
                 className="h-full bg-gradient-to-r from-islamic-gold to-yellow-500 rounded-full shadow-[0_0_20px_rgba(197,160,89,0.4)]"
               />
             </div>
-            <div className="flex justify-between text-xs font-black opacity-40 tracking-[0.2em] uppercase">
+            <div className="flex justify-between text-xs font-black text-islamic-green/70 dark:text-islamic-beige/70 tracking-wider uppercase">
               <span>{progressPercentage}% مكتمل</span>
               <span>{totalDhikr - completedDhikr} متبقي</span>
             </div>
@@ -116,9 +119,9 @@ export default function Adhkar() {
 
           <button
             onClick={() => resetCategory(activeTab)}
-            className="flex items-center gap-3 px-8 py-4 rounded-2xl bg-red-500/5 text-red-500 hover:bg-red-500 hover:text-white transition-all text-sm font-bold group border border-red-500/10"
+            className="flex items-center gap-2.5 px-6 sm:px-8 py-3.5 sm:py-4 rounded-2xl bg-red-500/10 text-red-600 dark:text-red-400 hover:bg-red-500 hover:text-white transition-all text-sm font-bold group border border-red-500/15 whitespace-nowrap shrink-0 cursor-pointer"
           >
-            <RotateCcw size={18} className="group-hover:rotate-180 transition-transform duration-700" />
+            <RotateCcw size={18} className="group-hover:rotate-180 transition-transform duration-700 shrink-0" />
             إعادة الضبط
           </button>
         </div>

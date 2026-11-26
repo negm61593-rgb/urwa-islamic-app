@@ -9,7 +9,7 @@ export interface DownloadStatus {
 }
 
 export const offlineService = {
-  async isDownloaded(surahNumber: number, reciterId: string, url: string): Promise<boolean> {
+  async isDownloaded(_surahNumber: number, _reciterId: string, url: string): Promise<boolean> {
     if (typeof caches === 'undefined') return false;
     try {
       const cache = await caches.open(CACHE_NAME);
@@ -22,9 +22,9 @@ export const offlineService = {
   },
 
   async downloadSurah(
-    surahNumber: number, 
-    reciterId: string, 
-    url: string, 
+    _surahNumber: number,
+    _reciterId: string,
+    url: string,
     onProgress?: (progress: number) => void
   ): Promise<boolean> {
     if (typeof caches === 'undefined') return false;
@@ -45,7 +45,7 @@ export const offlineService = {
       const reader = response.body?.getReader();
       if (!reader) throw new Error('ReadableStream not supported');
 
-      const chunks: Uint8Array[] = [];
+      const chunks: BlobPart[] = [];
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
@@ -56,9 +56,14 @@ export const offlineService = {
         }
       }
 
-      const blob = new Blob(chunks);
+      const contentType = response.headers.get('content-type') || 'audio/mpeg';
+      const blob = new Blob(chunks, { type: contentType });
       const cacheResponse = new Response(blob, {
-        headers: response.headers
+        status: 200,
+        headers: {
+          'Content-Type': contentType,
+          'Content-Length': String(blob.size),
+        },
       });
       
       await cache.put(url, cacheResponse);

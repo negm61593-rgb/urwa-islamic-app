@@ -250,3 +250,65 @@ h1, h2, h3, h4 {
   outline-offset: 3px;
   border-radius: 6px;
 }
+
+/* ─── Tajweed color classes (Dar Al-Maarifa / quran.com palette) ─────────── */
+.tajweed-ghunnah,
+.tajweed-idgham_ghunnah,
+.tajweed-idgham_shafawi {
+  color: #169400;
+}
+.dark .tajweed-ghunnah,
+.dark .tajweed-idgham_ghunnah,
+.dark .tajweed-idgham_shafawi {
+  color: #4ade80;
+}
+
+.tajweed-qalaqah {
+  color: #0051ff;
+}
+.dark .tajweed-qalaqah {
+  color: #60a5fa;
+}
+
+.tajweed-ikhafa,
+.tajweed-ikhafa_shafawi,
+.tajweed-iqlab {
+  color: #9400A8;
+}
+.dark .tajweed-ikhafa,
+.dark .tajweed-ikhafa_shafawi,
+.dark .tajweed-iqlab {
+  color: #d946ef;
+}
+
+.tajweed-madda_necessary {
+  color: #b91c1c;
+}
+.dark .tajweed-madda_necessary {
+  color: #f87171;
+}
+
+.tajweed-madda_obligatory {
+  color: #ef4444;
+}
+.dark .tajweed-madda_obligatory {
+  color: #fca5a5;
+}
+
+.tajweed-madda_permissible,
+.tajweed-madda_normal {
+  color: #ea580c;
+}
+.dark .tajweed-madda_permissible,
+.dark .tajweed-madda_normal {
+  color: #fb923c;
+}
+
+.tajweed-ham_wasl,
+.tajweed-slnt,
+.tajweed-laam_shamsiyah,
+.tajweed-idgham_wo_ghunnah,
+.tajweed-idgham_mutajanisayn,
+.tajweed-idgham_mutaqaribayn {
+  color: #8c8c8c;
+}

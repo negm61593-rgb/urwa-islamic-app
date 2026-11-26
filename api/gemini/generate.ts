@@ -1,8 +1,17 @@
 ﻿import { GoogleGenAI } from '@google/genai';
 
+const ALLOWED_ORIGINS = new Set([
+  'https://urwa-islamic.vercel.app',
+  'http://localhost:3000',
+  'http://localhost:5173',
+]);
+
 export default async function handler(req: any, res: any) {
-  // Handle CORS
-  res.setHeader('Access-Control-Allow-Origin', '*');
+  const origin = req.headers?.origin;
+  if (origin && (ALLOWED_ORIGINS.has(origin) || origin.endsWith('.vercel.app'))) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+  }
+  res.setHeader('Vary', 'Origin');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
