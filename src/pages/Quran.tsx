@@ -844,7 +844,7 @@ export default function Quran() {
                 </button>
               </div>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
                 {filteredSurahs.map((surah, index) => {
                   const audioUrl = getAudioUrl(surah.number, selectedReciter);
                   const isCached = cachedUrls.includes(audioUrl);
@@ -856,66 +856,66 @@ export default function Quran() {
                       animate={{ opacity: 1, scale: 1 }}
                       transition={{ delay: Math.min(index * 0.015, 0.3) }}
                       onClick={() => openSurah(surah.number)}
-                      className="group cursor-pointer relative bg-white dark:bg-white/5 p-6 sm:p-8 rounded-[2.5rem] shadow-sm hover:shadow-2xl border border-islamic-gold/20 hover:border-islamic-gold/50 transition-all text-right flex items-center justify-between overflow-hidden soft-glow"
+                      className="group cursor-pointer relative bg-white dark:bg-white/5 p-5 sm:p-6 rounded-[2rem] shadow-sm hover:shadow-2xl border border-islamic-gold/20 hover:border-islamic-gold/50 transition-all text-right flex flex-col justify-between gap-4 overflow-hidden soft-glow"
                     >
                       <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-islamic-gold/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
 
-                      <div className="flex items-center gap-4 sm:gap-5 relative z-10 w-full">
-                        <div className="w-12 h-12 sm:w-14 sm:h-14 shrink-0 bg-islamic-beige dark:bg-white/5 rounded-2xl flex items-center justify-center text-islamic-gold font-black text-xl group-hover:bg-islamic-gold group-hover:text-islamic-green transition-all duration-500 shadow-inner">
+                      <div className="flex items-center gap-4 relative z-10 w-full">
+                        <div className="w-12 h-12 shrink-0 bg-islamic-beige dark:bg-white/5 rounded-2xl flex items-center justify-center text-islamic-gold font-black text-xl group-hover:bg-islamic-gold group-hover:text-islamic-green transition-all duration-500 shadow-inner">
                           {surah.number}
                         </div>
-                        <div className="space-y-1 flex-grow min-w-0">
-                          <div className="flex items-center justify-between gap-2">
-                            <h3 className="text-xl sm:text-2xl font-bold font-cairo text-islamic-green dark:text-islamic-gold group-hover:text-islamic-gold transition-colors truncate">
-                              {surah.name}
-                            </h3>
-                            <div className="flex items-center gap-1.5 shrink-0">
-                              <button
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  void handleDownload(surah.number);
-                                }}
-                                aria-label={isCached ? `حذف تحميل ${surah.name}` : `تحميل ${surah.name} للاستماع بدون إنترنت`}
-                                className={cn(
-                                  'p-2.5 rounded-xl transition-all relative overflow-hidden cursor-pointer',
-                                  isCached
-                                    ? 'bg-green-500/10 text-green-500 hover:bg-red-500/10 hover:text-red-500'
-                                    : 'bg-islamic-gold/10 text-islamic-gold hover:bg-islamic-gold/20'
-                                )}
-                              >
-                                {dlPct !== undefined ? (
-                                  <div className="relative">
-                                    <Loader2 size={18} className="animate-spin" />
-                                    <span className="absolute inset-0 flex items-center justify-center text-[8px] font-bold">
-                                      {dlPct}
-                                    </span>
-                                  </div>
-                                ) : isCached ? (
-                                  <div className="group/btn relative">
-                                    <CheckCircle2 size={18} className="group-hover/btn:opacity-0" />
-                                    <Trash2 size={18} className="absolute inset-0 opacity-0 group-hover/btn:opacity-100" />
-                                  </div>
-                                ) : (
-                                  <Download size={18} />
-                                )}
-                              </button>
-                              <button
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  void toggleAudio(surah.number);
-                                }}
-                                aria-label={currentAudio === surah.number && isPlaying ? `إيقاف ${surah.name}` : `تشغيل ${surah.name}`}
-                                className="p-2.5 rounded-xl bg-islamic-gold/10 text-islamic-gold hover:bg-islamic-gold hover:text-islamic-green transition-all cursor-pointer"
-                              >
-                                {currentAudio === surah.number && isPlaying ? <Pause size={18} /> : <Play size={18} />}
-                              </button>
-                            </div>
-                          </div>
-                          <div className="flex items-center gap-2 text-xs font-bold opacity-45 uppercase tracking-wider">
-                            <span dir="ltr">{surah.englishName}</span>
-                            <span className="w-1 h-1 bg-current rounded-full" />
-                            <span>{surah.numberOfAyahs} آية</span>
-                          </div>
+                        <h3 className="text-xl sm:text-2xl font-bold font-cairo text-islamic-green dark:text-islamic-gold group-hover:text-islamic-gold transition-colors leading-snug">
+                          {surah.name}
+                        </h3>
+                      </div>
+
+                      <div className="flex items-center justify-between gap-3 pt-3 border-t border-islamic-gold/10 relative z-10 w-full">
+                        <div className="flex items-center gap-2 text-xs font-bold opacity-55 uppercase tracking-wider min-w-0 flex-wrap">
+                          <span dir="ltr">{surah.englishName}</span>
+                          <span className="w-1 h-1 bg-current rounded-full shrink-0" />
+                          <span className="whitespace-nowrap">{surah.numberOfAyahs} آية</span>
+                        </div>
+
+                        <div className="flex items-center gap-1.5 shrink-0">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              void handleDownload(surah.number);
+                            }}
+                            aria-label={isCached ? `حذف تحميل ${surah.name}` : `تحميل ${surah.name} للاستماع بدون إنترنت`}
+                            className={cn(
+                              'p-2.5 rounded-xl transition-all relative overflow-hidden cursor-pointer',
+                              isCached
+                                ? 'bg-green-500/10 text-green-500 hover:bg-red-500/10 hover:text-red-500'
+                                : 'bg-islamic-gold/10 text-islamic-gold hover:bg-islamic-gold/20'
+                            )}
+                          >
+                            {dlPct !== undefined ? (
+                              <div className="relative">
+                                <Loader2 size={18} className="animate-spin" />
+                                <span className="absolute inset-0 flex items-center justify-center text-[8px] font-bold">
+                                  {dlPct}
+                                </span>
+                              </div>
+                            ) : isCached ? (
+                              <div className="group/btn relative">
+                                <CheckCircle2 size={18} className="group-hover/btn:opacity-0" />
+                                <Trash2 size={18} className="absolute inset-0 opacity-0 group-hover/btn:opacity-100" />
+                              </div>
+                            ) : (
+                              <Download size={18} />
+                            )}
+                          </button>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              void toggleAudio(surah.number);
+                            }}
+                            aria-label={currentAudio === surah.number && isPlaying ? `إيقاف ${surah.name}` : `تشغيل ${surah.name}`}
+                            className="p-2.5 rounded-xl bg-islamic-gold/10 text-islamic-gold hover:bg-islamic-gold hover:text-islamic-green transition-all cursor-pointer"
+                          >
+                            {currentAudio === surah.number && isPlaying ? <Pause size={18} /> : <Play size={18} />}
+                          </button>
                         </div>
                       </div>
                     </motion.div>
