@@ -19,6 +19,7 @@ import {
   X,
 } from 'lucide-react';
 import { offlineService } from '../services/offlineService';
+import { fetchJsonWithCache } from '../services/cacheService';
 import { TajweedToggle } from '../components/TajweedToggle';
 import { cn, toArabicNumerals } from '../lib/utils';
 
@@ -162,6 +163,7 @@ export default function Quran() {
   const playPromiseRef = useRef<Promise<void> | null>(null);
   const ayahRefs = useRef<{ [key: string]: HTMLSpanElement | null }>({});
   const surahDetailCache = useRef<Record<number, SurahDetail>>({});
+  const surahsRef = useRef<Surah[]>([]);
   const activeBlobUrlRef = useRef<string | null>(null);
   const verseTimingsRef = useRef<VerseTiming[]>([]);
   const activeAyahKeyRef = useRef<string | null>(null);
@@ -221,15 +223,14 @@ export default function Quran() {
     }
 
     try {
-      const res = await fetch(
-        `https://www.mp3quran.net/api/v3/ayat_timing?surah=${surahNumber}&read=${reciter.mp3quranReadId}`
+      const data = await fetchJsonWithCache<{ ayah?: number; start_time: number; end_time: number }[]>(
+        `https://www.mp3quran.net/api/v3/ayat_timing?surah=${surahNumber}&read=${reciter.mp3quranReadId}`,
+        { maxAgeMs: 30 * 86_400_000 }
       );
-      if (!res.ok) throw new Error('Timings unavailable');
-      const data = await res.json();
       if (Array.isArray(data)) {
         const mapped: VerseTiming[] = data
-          .filter((item: { ayah?: number }) => typeof item.ayah === 'number' && item.ayah >= 1)
-          .map((item: { ayah: number; start_time: number; end_time: number }) => ({
+          .filter((item) => typeof item.ayah === 'number' && item.ayah >= 1)
+          .map((item) => ({
             verse_key: `${surahNumber}:${item.ayah}`,
             timestamp_from: Number(item.start_time) || 0,
             timestamp_to: Number(item.end_time) || 0,
@@ -249,7 +250,8 @@ export default function Quran() {
   const stopAudio = useCallback(async () => {
     await safePause();
     if (audioRef.current) {
-      audioRef.current.src = '';
+      audioRef.current.removeAttribute('src');
+      audioRef.current.load();
     }
     if (activeBlobUrlRef.current) {
       URL.revokeObjectURL(activeBlobUrlRef.current);
@@ -371,6 +373,8 @@ export default function Quran() {
 
   useEffect(() => {
     const audio = new Audio();
+    const saveData = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData;
+    audio.preload = saveData ? 'none' : 'metadata';
     audioRef.current = audio;
 
     const handleTimeUpdate = () => {
@@ -450,9 +454,10 @@ export default function Quran() {
 
       setTajweedLoading(true);
       try {
-        const res = await fetch(`https://api.quran.com/api/v4/quran/verses/uthmani_tajweed?chapter_number=${number}`);
-        if (!res.ok) throw new Error('Tajweed fetch failed');
-        const json = await res.json();
+        const json = await fetchJsonWithCache<{ verses?: { verse_key?: string; text_uthmani_tajweed?: string }[] }>(
+          `https://api.quran.com/api/v4/quran/verses/uthmani_tajweed?chapter_number=${number}`,
+          { maxAgeMs: 90 * 86_400_000 }
+        );
         if (Array.isArray(json.verses)) {
           const map = new Map<string, string>();
           for (const v of json.verses) {
@@ -495,10 +500,18 @@ export default function Quran() {
   const fetchSurahs = async () => {
     try {
       setLoading(true);
-      const response = await fetch('https://api.quran.com/api/v4/chapters?language=ar');
-      const data = await response.json();
+      const data = await fetchJsonWithCache<{
+        chapters?: {
+          id: number;
+          name_arabic: string;
+          name_simple: string;
+          translated_name: { name: string };
+          verses_count: number;
+          revelation_place: string;
+        }[];
+      }>('https://api.quran.com/api/v4/chapters?language=ar', { maxAgeMs: 30 * 86_400_000 });
       if (data.chapters) {
-        const mappedSurahs: Surah[] = data.chapters.map((c: any) => ({
+        const mappedSurahs: Surah[] = data.chapters.map((c) => ({
           number: c.id,
           name: c.name_arabic,
           englishName: c.name_simple,
@@ -506,6 +519,7 @@ export default function Quran() {
           numberOfAyahs: c.verses_count,
           revelationType: c.revelation_place === 'makkah' ? 'Meccan' : 'Medinan',
         }));
+        surahsRef.current = mappedSurahs;
         setSurahs(mappedSurahs);
       } else {
         throw new Error('Failed to fetch surahs');
@@ -533,14 +547,34 @@ export default function Quran() {
         setLoading(true);
         setError(null);
 
-        const [surahRes, versesRes] = await Promise.all([
-          fetch(`https://api.quran.com/api/v4/chapters/${number}?language=ar`),
-          fetch(`https://api.quran.com/api/v4/quran/verses/uthmani?chapter_number=${number}`),
+        const knownSurah = surahsRef.current.find((s) => s.number === number);
+        const versesPromise = fetchJsonWithCache<{ verses?: any[] }>(
+          `https://api.quran.com/api/v4/quran/verses/uthmani?chapter_number=${number}`,
+          { maxAgeMs: 90 * 86_400_000 }
+        );
+
+        const [surahMeta, versesData] = await Promise.all([
+          knownSurah
+            ? Promise.resolve(knownSurah)
+            : fetchJsonWithCache<{ chapter?: any }>(
+                `https://api.quran.com/api/v4/chapters/${number}?language=ar`,
+                { maxAgeMs: 30 * 86_400_000 }
+              ).then((d) =>
+                d.chapter
+                  ? ({
+                      number: d.chapter.id,
+                      name: d.chapter.name_arabic,
+                      englishName: d.chapter.name_simple,
+                      englishNameTranslation: d.chapter.translated_name.name,
+                      numberOfAyahs: d.chapter.verses_count,
+                      revelationType: d.chapter.revelation_place === 'makkah' ? 'Meccan' : 'Medinan',
+                    } satisfies Surah)
+                  : null
+              ),
+          versesPromise,
         ]);
 
-        const [surahData, versesData] = await Promise.all([surahRes.json(), versesRes.json()]);
-
-        if (surahData.chapter && versesData.verses) {
+        if (surahMeta && versesData.verses) {
           const ayahs: Ayah[] = versesData.verses.map((v: any, index: number) => ({
             number: v.id,
             text: v.text_uthmani,
@@ -550,12 +584,7 @@ export default function Quran() {
           }));
 
           const detail: SurahDetail = {
-            number: surahData.chapter.id,
-            name: surahData.chapter.name_arabic,
-            englishName: surahData.chapter.name_simple,
-            englishNameTranslation: surahData.chapter.translated_name.name,
-            numberOfAyahs: surahData.chapter.verses_count,
-            revelationType: surahData.chapter.revelation_place === 'makkah' ? 'Meccan' : 'Medinan',
+            ...surahMeta,
             ayahs,
           };
 

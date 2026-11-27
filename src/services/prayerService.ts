@@ -82,9 +82,47 @@ const BASE = 'https://api.aladhan.com/v1';
 export const DEFAULT_COORDINATES: Coordinates = { latitude: 21.4225, longitude: 39.8262 };
 export const DEFAULT_CITY = 'مكة المكرمة';
 
+const PRAYER_CACHE_PREFIX = 'urwa_prayer_v1_';
+const MAX_CACHE_ENTRIES = 12;
+
+function coordKey(coords: Coordinates): string {
+  return `${coords.latitude.toFixed(2)}_${coords.longitude.toFixed(2)}`;
+}
+
+function readLocalCache<T>(key: string, maxAgeMs: number): T | null {
+  try {
+    const raw = localStorage.getItem(PRAYER_CACHE_PREFIX + key);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as { cachedAt: number; data: T };
+    if (Date.now() - parsed.cachedAt < maxAgeMs) {
+      return parsed.data;
+    }
+    localStorage.removeItem(PRAYER_CACHE_PREFIX + key);
+  } catch {
+    // Ignore storage errors
+  }
+  return null;
+}
+
+function writeLocalCache(key: string, data: unknown): void {
+  try {
+    const keys: string[] = [];
+    for (let i = 0; i < localStorage.length; i++) {
+      const k = localStorage.key(i);
+      if (k && k.startsWith(PRAYER_CACHE_PREFIX)) keys.push(k);
+    }
+    if (keys.length >= MAX_CACHE_ENTRIES) {
+      keys.slice(0, keys.length - MAX_CACHE_ENTRIES + 1).forEach((k) => localStorage.removeItem(k));
+    }
+    localStorage.setItem(PRAYER_CACHE_PREFIX + key, JSON.stringify({ cachedAt: Date.now(), data }));
+  } catch {
+    // Ignore storage errors
+  }
+}
+
 export const prayerService = {
   /**
-   * Fetch today's prayer times for given coordinates.
+   * Fetch today's prayer times for given coordinates (cached for the day).
    */
   async getPrayerTimes(
     coords: Coordinates,
@@ -95,25 +133,37 @@ export const prayerService = {
     const mm = String(today.getMonth() + 1).padStart(2, '0');
     const yyyy = today.getFullYear();
     const dateStr = `${dd}-${mm}-${yyyy}`;
+    const cacheKey = `timings_${dateStr}_${coordKey(coords)}_${method}`;
+
+    const cached = readLocalCache<PrayerTimesResponse>(cacheKey, 24 * 3600_000);
+    if (cached) return cached;
 
     const url = `${BASE}/timings/${dateStr}?latitude=${coords.latitude}&longitude=${coords.longitude}&method=${method}`;
     const res = await fetch(url);
     if (!res.ok) throw new Error(`Aladhan API error: ${res.status}`);
     const json = await res.json();
     if (json.code !== 200) throw new Error(json.status ?? 'Unknown API error');
-    return json.data as PrayerTimesResponse;
+    const data = json.data as PrayerTimesResponse;
+    writeLocalCache(cacheKey, data);
+    return data;
   },
 
   /**
-   * Fetch Qibla direction (degrees from North) for given coordinates.
+   * Fetch Qibla direction (degrees from North) for given coordinates (cached persistently).
    */
   async getQiblaDirection(coords: Coordinates): Promise<number> {
+    const cacheKey = `qibla_${coordKey(coords)}`;
+    const cached = readLocalCache<number>(cacheKey, 90 * 86_400_000);
+    if (typeof cached === 'number') return cached;
+
     const url = `${BASE}/qibla/${coords.latitude}/${coords.longitude}`;
     const res = await fetch(url);
     if (!res.ok) throw new Error(`Aladhan Qibla API error: ${res.status}`);
     const json = await res.json();
     if (json.code !== 200) throw new Error(json.status ?? 'Unknown API error');
-    return (json.data as QiblaResponse).direction;
+    const direction = (json.data as QiblaResponse).direction;
+    writeLocalCache(cacheKey, direction);
+    return direction;
   },
 
   /**
@@ -149,33 +199,40 @@ export const prayerService = {
               reject(new Error('حدث خطأ غير معروف أثناء تحديد الموقع.'));
           }
         },
-        { timeout: 6000, maximumAge: 300000, enableHighAccuracy: false }
+        { timeout: 6000, maximumAge: 1_800_000, enableHighAccuracy: false }
       );
     });
   },
 
   /**
-   * Reverse-geocode coordinates to a city name using a free API.
+   * Reverse-geocode coordinates to a city name using a free API (cached persistently).
    */
   async getCityName(coords: Coordinates): Promise<string> {
     if (Math.abs(coords.latitude - DEFAULT_COORDINATES.latitude) < 0.05 &&
         Math.abs(coords.longitude - DEFAULT_COORDINATES.longitude) < 0.05) {
       return DEFAULT_CITY;
     }
+    const cacheKey = `city_${coordKey(coords)}`;
+    const cached = readLocalCache<string>(cacheKey, 30 * 86_400_000);
+    if (cached) return cached;
+
     try {
       const url = `https://nominatim.openstreetmap.org/reverse?lat=${coords.latitude}&lon=${coords.longitude}&format=json&accept-language=ar`;
       const res = await fetch(url, {
         headers: { 'User-Agent': 'Urwah-Islamic-App/1.0' },
       });
       const data = await res.json();
-      return (
+      const name =
         data.address?.city ||
         data.address?.town ||
         data.address?.village ||
         data.address?.county ||
         data.address?.state ||
-        'موقعك الحالي'
-      );
+        'موقعك الحالي';
+      if (name !== 'موقعك الحالي') {
+        writeLocalCache(cacheKey, name);
+      }
+      return name;
     } catch {
       return 'موقعك الحالي';
     }

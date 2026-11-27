@@ -256,7 +256,7 @@ function QiblaCompass({ qiblaDirection }: QiblaCompassProps) {
 
 // ─── Main Page ───────────────────────────────────────────────────────────────
 export default function Prayer() {
-  const [, setCoords] = useState<Coordinates | null>(null);
+  const [coords, setCoords] = useState<Coordinates | null>(null);
   const [cityName, setCityName] = useState<string>("");
   const [isFallbackLocation, setIsFallbackLocation] = useState(false);
   const [prayerData, setPrayerData] = useState<PrayerTimesResponse | null>(null);
@@ -308,10 +308,20 @@ export default function Prayer() {
 
   useEffect(() => { load(); }, []);
 
-  const handleMethodChange = (m: CalculationMethod) => {
+  const handleMethodChange = async (m: CalculationMethod) => {
     setMethod(m);
     setShowMethodPicker(false);
-    load(m);
+    if (!coords) {
+      void load(m);
+      return;
+    }
+    // Reuse already-resolved GPS, Qibla, and city name; only fetch timings for the new method
+    try {
+      const data = await prayerService.getPrayerTimes(coords, m);
+      setPrayerData(data);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "حدث خطأ غير متوقع.");
+    }
   };
 
   // ── Error state ────────────────────────────────────────────────────────────
