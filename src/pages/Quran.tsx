@@ -1082,8 +1082,11 @@ export default function Quran() {
                       <Book size={200} />
                     </div>
 
-                    <div className="relative z-10" style={{ fontSize: `${fontSize}px` }}>
-                      <p className="mushaf-page text-islamic-green dark:text-islamic-beige">
+                    <div className="relative z-10">
+                      <p
+                        className="mushaf-page text-islamic-green dark:text-islamic-beige"
+                        style={{ fontSize: `${fontSize}px` }}
+                      >
                         {surahDetail.ayahs.map((ayah, idx) => {
                           const isActive = activeAyahKey === ayah.verse_key;
 
