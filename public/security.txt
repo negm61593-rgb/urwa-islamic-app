@@ -1,4 +1,4 @@
-Contact: https://github.com/xpork504-ux/urwa-islamic-app/security
+Contact: https://github.com/negm61593-rgb/urwa-islamic-app/security
 Expires: 2027-11-26T00:00:00.000Z
 Preferred-Languages: ar, en
 Canonical: https://urwa-islamic.vercel.app/.well-known/security.txt

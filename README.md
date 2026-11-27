@@ -72,7 +72,7 @@ urwa/
 
 1. **استنساخ المستودع (Clone Repository)**:
    ```bash
-   git clone https://github.com/xpork504-ux/urwa-islamic-app.git
+   git clone https://github.com/negm61593-rgb/urwa-islamic-app.git
    cd urwa-islamic-app
    ```
 
